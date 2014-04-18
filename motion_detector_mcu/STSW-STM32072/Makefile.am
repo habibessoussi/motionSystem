@@ -1,0 +1,1 @@
+SUBDIRS=CMSIS STM32L1xx_StdPeriph_Driver
