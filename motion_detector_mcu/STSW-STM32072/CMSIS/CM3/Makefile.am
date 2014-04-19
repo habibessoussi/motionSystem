@@ -1,1 +1,1 @@
-SUBDIRS=CoreSupport
+SUBDIRS=CoreSupport DeviceSupport

@@ -8,8 +8,6 @@
 
 #include "mcu_init.h"
 
-#include "stm32l1xx.h"
-#include "stm32l1xx_conf.h"
 
 /* Public function prototypes -----------------------------------------------*/
 extern void MDI_Init(void);
@@ -25,8 +23,7 @@ static void conf_analog_all_GPIOS(void);
 /* Private variables ---------------------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
 /* ---------------------------------------------------------------------------*/
-#define GPIO_LOW(a,b)		a->BSRRH = b
-#define GPIO_HIGH(a,b)		a->BSRRL = b
+
 
 void MDI_Init(void)
 {

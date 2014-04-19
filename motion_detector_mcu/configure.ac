@@ -16,6 +16,9 @@ AC_PROG_CC
 
 AM_PROG_CC_C_O
 
+dnl for assembler startup files
+AM_PROG_AS
+
 dnl Check for RANLIB
 AC_PROG_RANLIB
 

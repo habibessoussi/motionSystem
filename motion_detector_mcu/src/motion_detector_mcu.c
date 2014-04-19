@@ -12,6 +12,9 @@ int main()
 	/* Init the Microcontroller */
 	MDI_Init();
 
+	/* Turn on the Green LED to tell I am successfully initialized */
+	GPIO_HIGH(GPIOB, GPIO_Pin_7);
+
 	/* Infinity loop */
 	while(1)
 	{
