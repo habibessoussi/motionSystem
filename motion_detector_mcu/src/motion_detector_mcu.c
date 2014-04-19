@@ -18,6 +18,5 @@ int main()
 	/* Infinity loop */
 	while(1)
 	{
-		/*@ TODO ADD HERE USER APPLICATION*/
 	}
 }

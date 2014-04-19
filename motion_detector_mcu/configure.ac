@@ -13,7 +13,6 @@ dnl Checks for programs.
 # We need a C compiler.
 AC_PROG_CC
 
-
 AM_PROG_CC_C_O
 
 dnl for assembler startup files
@@ -23,7 +22,7 @@ dnl Check for RANLIB
 AC_PROG_RANLIB
 
 AC_CONFIG_FILES([Makefile
-		 gdb/debug.gdb
+		 		 gdb/debug.gdb
 				 src/Makefile
 				 STSW-STM32072/Makefile
 				 STSW-STM32072/STM32L1xx_StdPeriph_Driver/Makefile
