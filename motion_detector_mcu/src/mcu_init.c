@@ -39,7 +39,6 @@ void MDI_Se_Init(void) {
 	/* Configure SysTick IRQ and SysTick Timer to generate interrupts every 500µs */
 	RCC_GetClocksFreq(&MDI_Ri_RCC_Clocks);
 	SysTick_Config(MDI_Ri_RCC_Clocks.HCLK_Frequency / 2000);
-
 	/* Init I/O ports */
 	MDI_Si_Init_GPIOB();
 
@@ -47,7 +46,6 @@ void MDI_Se_Init(void) {
 	SysTick->CTRL |= ( SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk);
 
 	/* --- Turn on then after 1 second off the Green and blue LED to tell I am successfully initialized */
-
 	/* Enable the GPIOB Clock */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
 

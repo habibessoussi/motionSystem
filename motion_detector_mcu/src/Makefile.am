@@ -26,7 +26,6 @@ CPFLAGS=-O binary
 CP=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump -Sdl
 
-	
 install-exec-hook: $(bin_PROGRAMS)
 		$(CP) $(CPFLAGS) $(bin_PROGRAMS) motion_detector_mcu.bin
 		$(OBJDUMP) $(bin_PROGRAMS) > motion_detector_mcu.s

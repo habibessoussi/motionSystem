@@ -14,7 +14,6 @@ int main()
 	/* Init the Microcontroller */
 	MDI_Se_Init();
 
-
 	/* Infinity loop */
 	while(1)
 	{
