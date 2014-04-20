@@ -10,28 +10,32 @@
 
 
 /* Public function prototypes -----------------------------------------------*/
-extern void MDI_Init(void);
-/* ---------------------------------------------------------------------------*/
+extern void MDI_Se_Init(void);
+extern void MDI_Se_Delay(uint32_t nTime);
+/* --------------------------------------------------------------------------*/
 
 
 /* Private function prototypes -----------------------------------------------*/
-static void RTC_Configuration(void);
-static void Init_GPIOs(void);
-static void conf_analog_all_GPIOS(void);
+static void MDI_Si_RCC_Configuration(void);
+static void MDI_Si_RTC_Configuration(void);
+static void MDI_Si_Init_GPIOB(void);
+void MDI_Si_TimingDelay_Decrement(void);
 /* ---------------------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-RCC_ClocksTypeDef RCC_Clocks;
+static RCC_ClocksTypeDef MDI_Ri_RCC_Clocks;
+static volatile uint32_t MDI_Ri_TimingDelay;
 /* ---------------------------------------------------------------------------*/
 
 
-void MDI_Init(void)
+
+void MDI_Se_Init(void)
 {
 	/* Configure Clocks for Application need */
-	  RCC_Configuration();
+	  MDI_Si_RCC_Configuration();
 
 	  /* Configure RTC Clocks */
-	  RTC_Configuration();
+	  MDI_Si_RTC_Configuration();
 
 	  /* Set internal voltage regulator to 1.8V */
 	  PWR_VoltageScalingConfig(PWR_VoltageScaling_Range1);
@@ -39,8 +43,15 @@ void MDI_Init(void)
 	  /* Wait Until the Voltage Regulator is ready */
 	  while (PWR_GetFlagStatus(PWR_FLAG_VOS) != RESET) ;
 
+	  /* Configure SysTick IRQ and SysTick Timer to generate interrupts every 500µs */
+	  RCC_GetClocksFreq(&MDI_Ri_RCC_Clocks);
+	  SysTick_Config(MDI_Ri_RCC_Clocks.HCLK_Frequency / 2000);
+
 	  /* Init I/O ports */
-	  Init_GPIOs();
+	  MDI_Si_Init_GPIOB();
+
+	  /* Enable SysTick IRQ and SysTick Timer */
+	  SysTick->CTRL  |=  ( SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk );
 
 }
 
@@ -50,7 +61,7 @@ void MDI_Init(void)
   * @param  None
   * @retval None
   */
-void RCC_Configuration(void)
+void MDI_Si_RCC_Configuration(void)
 {
 
   /* Enable HSI Clock */
@@ -79,7 +90,7 @@ void RCC_Configuration(void)
 }
 
 
-void RTC_Configuration(void)
+void MDI_Si_RTC_Configuration(void)
 {
 
 /* Allow access to the RTC */
@@ -102,82 +113,14 @@ void RTC_Configuration(void)
   RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
 
 }
-/**
-  * @brief  To initialize the I/O ports
-  * @caller main
-  * @param None
-  * @retval None
-  */
 
 
-void conf_analog_all_GPIOS(void)
+void  MDI_Si_Init_GPIOB (void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
 
-  /* Enable GPIOs clock */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB |
-                        RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD |
-                        RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOH, ENABLE);
-
-  /* Configure all GPIO port pins in Analog Input mode (floating input trigger OFF) */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
-  GPIO_Init(GPIOH, &GPIO_InitStructure);
-
-
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  /* Disable GPIOs clock */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB |
-                        RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD |
-                        RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOH, DISABLE);
-}
-
-void  Init_GPIOs (void)
-{
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  EXTI_InitTypeDef EXTI_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
-
-  conf_analog_all_GPIOS();   /* configure all GPIOs as analog input */
-
-  /* Enable GPIOs clock */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOA, ENABLE);
-
-  /* USER button and WakeUP button init: GPIO set in input interrupt active mode */
-
-  /* Configure User Button pin as input */
-  GPIO_InitStructure.GPIO_Pin = RCC_AHBPeriph_GPIOA;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
-  GPIO_Init(RCC_AHBPeriph_GPIOA, &GPIO_InitStructure);
-
-  /* Connect Button EXTI Line to Button GPIO Pin */
-  SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA,EXTI_PinSource0);
-
-  /* Configure User Button and IDD_WakeUP EXTI line */
-  EXTI_InitStructure.EXTI_Line = EXTI_Line0 ;  // PA0 for User button AND IDD_WakeUP
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-
-  /* Enable and set User Button and IDD_WakeUP EXTI Interrupt to the lowest priority */
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn ;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
-  NVIC_Init(&NVIC_InitStructure);
+  /* Enable GPIOB clock */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB , ENABLE);
 
 /* Configure the GPIO_LED pins  LD3 & LD4*/
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_6;
@@ -186,14 +129,48 @@ void  Init_GPIOs (void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-  GPIO_LOW(GPIOB, GPIO_Pin_7);
-  GPIO_LOW(GPIOB, GPIO_Pin_6);
+  MDI_Me_GPIO_LOW(GPIOB, GPIO_Pin_7);
+  MDI_Me_GPIO_LOW(GPIOB, GPIO_Pin_6);
 
-/* Disable all GPIOs clock */
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB |
-                        RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD |
-                        RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOH, DISABLE);
+/* Disable  GPIOB clock */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, DISABLE);
+
+}
+
+/**
+  * @brief  Inserts a delay time.
+  * @param  nTime: specifies the delay time length, in ms.
+  * @retval None
+  */
+
+void MDI_Se_Delay(uint32_t nTime)
+{
+  MDI_Ri_TimingDelay = nTime;
+  while(MDI_Ri_TimingDelay != 0);
+}
+
+/**
+  * @brief  Decrements the MDI_Ri_TimingDelay variable.
+  * @param  None
+  * @retval None
+  */
+void MDI_Si_TimingDelay_Decrement(void)
+{
+
+  if (MDI_Ri_TimingDelay != 0x00)
+  {
+	  MDI_Ri_TimingDelay--;
+  }
 
 }
 
 
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
+	MDI_Si_TimingDelay_Decrement();
+}
