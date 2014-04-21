@@ -5,6 +5,7 @@ bin_PROGRAMS=motion_detector_mcu.elf
 motion_detector_mcu_elf_SOURCES=motion_detector_mcu.c \
 							    mcu_init.c \
 							    mcu_utils.c \
+							    motion_detection_manager.c \
 							    $(abs_top_srcdir)/STSW-STM32072/CMSIS/CM3/DeviceSupport/ST/STM32L1xx/startup/TrueSTUDIO/startup_stm32l1xx_md.s
 							    
 

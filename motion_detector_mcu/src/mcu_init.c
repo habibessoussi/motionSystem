@@ -8,10 +8,6 @@
 #include "mcu_init.h"
 #include "mcu_utils.h"
 
-/* Public function prototypes -----------------------------------------------*/
-extern void MDI_Se_Init(void);
-/* --------------------------------------------------------------------------*/
-
 /* Private function prototypes -----------------------------------------------*/
 static void MDI_Si_RCC_Configuration(void);
 static void MDI_Si_RTC_Configuration(void);
@@ -44,24 +40,6 @@ void MDI_Se_Init(void) {
 
 	/* Enable SysTick IRQ and SysTick Timer */
 	SysTick->CTRL |= ( SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk);
-
-	/* --- Turn on then after 1 second off the Green and blue LED to tell I am successfully initialized */
-	/* Enable the GPIOB Clock */
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-
-	/* Turn on lights */
-	MDU_Me_GPIO_HIGH(GPIOB, GPIO_Pin_7);
-	MDU_Me_GPIO_HIGH(GPIOB, GPIO_Pin_6);
-
-	/* Wait 1000 ms seconds */
-	MDU_Se_Delay(1000);
-
-	/* Turn off lights ! ready to go */
-	MDU_Me_GPIO_LOW(GPIOB, GPIO_Pin_7);
-	MDU_Me_GPIO_LOW(GPIOB, GPIO_Pin_6);
-
-	/* Disable the GPIOB Clock */
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, DISABLE);
 
 }
 
