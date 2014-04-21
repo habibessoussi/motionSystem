@@ -13,6 +13,11 @@ static void MDM_Si_UARTxPut(uint8_t data, USART_TypeDef * const UART);
 static uint8_t MDM_Si_UARTxGet(USART_TypeDef * const UART);
 /* ---------------------------------------------------------------------------*/
 
+/* Private constants ---------------------------------------------------------*/
+#define MDM_Ct_BaudRate 9600
+/* ---------------------------------------------------------------------------*/
+
+
 /**
  * Initialize UART1
  */
@@ -148,7 +153,7 @@ void MDM_Si_UARTxInit(USART_TypeDef * const UART)
 	assert_param(UART==USART1 || UART==USART2);
 
 	USART_ClockInit(UART, &USART_ClockInitStructure);
-	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_BaudRate = MDM_Ct_BaudRate;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
