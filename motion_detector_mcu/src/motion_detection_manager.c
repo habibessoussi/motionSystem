@@ -20,9 +20,9 @@ void MDM_Se_UART1Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	//enable bus clocks
-	RCC_APB2PeriphClockCmd(
-	RCC_APB2Periph_USART1 | RCC_AHBPeriph_GPIOA, ENABLE);
+	//enable USART2 clocks and GPIOA
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
 	/* Connect P9 to USART1_Tx
 	 * Connect P10 to USART1_Rx
@@ -35,16 +35,15 @@ void MDM_Se_UART1Init(void)
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource12, GPIO_AF_USART1);
 
 	//Set USART1 Tx (PA.09), as AF push-pull, Rx (PA.10)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9  |
-								  GPIO_Pin_10 |
-								  GPIO_Pin_11 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 |
+	GPIO_Pin_10 |
+	GPIO_Pin_11 | GPIO_Pin_12;
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
 
 	MDM_Si_UARTxInit(USART1);
 }
@@ -74,33 +73,32 @@ void MDM_Se_UART2Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-		//enable bus clocks
-		RCC_APB1PeriphClockCmd(
-		RCC_APB1Periph_USART2 | RCC_AHBPeriph_GPIOA, ENABLE);
+	//enable USART2 clocks and GPIOA
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
-		/* Connect P2 to USART2_Tx
-		 * Connect P3 to USART2_Rx
-		 * Connect P0 to USART2_CTS
-		 * Connect P1 to USART2_RTS
-		 */
-		GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_USART2);
-		GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_USART2);
-		GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
-		GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
+	/* Connect P2 to USART2_Tx
+	 * Connect P3 to USART2_Rx
+	 * Connect P0 to USART2_CTS
+	 * Connect P1 to USART2_RTS
+	 */
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);
 
-		//Set USART2 Tx (PA.02), as AF push-pull, Rx (PA.3)
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 |
-									  GPIO_Pin_1 |
-									  GPIO_Pin_2 | GPIO_Pin_3;
+	//Set USART2 Tx (PA.02), as AF push-pull, Rx (PA.3)
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 |
+	GPIO_Pin_1 |
+	GPIO_Pin_2 | GPIO_Pin_3;
 
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	  	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-
-		MDM_Si_UARTxInit(USART2);
+	MDM_Si_UARTxInit(USART2);
 }
 
 /**
