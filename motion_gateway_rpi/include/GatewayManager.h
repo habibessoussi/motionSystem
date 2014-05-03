@@ -50,7 +50,10 @@ public:
 	 */
 	size_t read_server(uint8_t *buffer);
 
-
+	/**
+	 * Destructor
+	 */
+	virtual ~GatewayManager_c();
 
 
 private:

@@ -24,11 +24,16 @@ int main (int argc, char* argv[])
 	ErrorGateWayCode = gatewayManager.init_connection();
 	if (ErrorGateWayCode !=  0 )
 	{
-		std::cerr << strerror(ErrorGateWayCode) << std::endl;
+		std::cerr << "[ERROR]" << strerror(ErrorGateWayCode) << std::endl;
 		return EXIT_FAILURE;
 	}
+	else
+	{
+		std::cout << "[INFO] connected to server " << std::endl;
+	}
 
-
+	/** @TODO : add here the read from UART and write on socket */
+	gatewayManager.write_server((const uint8_t*)"\nHey salut\n\n");
 
 	return 0;
 }

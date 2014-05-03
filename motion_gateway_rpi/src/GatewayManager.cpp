@@ -11,6 +11,10 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+
+#define READ_BUFFER_SIZE 128
+
 
 /* Initialize static members */
 const std::string GatewayManager_c::m_hostname = "192.168.1.14";
@@ -45,11 +49,16 @@ uint32_t GatewayManager_c::init_connection()
 
 size_t GatewayManager_c::write_server(const uint8_t *buffer)
 {
-	return send(m_clientSocket, buffer, sizeof(buffer), 0);
+	return send(m_clientSocket, buffer, strlen((const char*)buffer), 0);
 }
 
 size_t GatewayManager_c::read_server(uint8_t *buffer)
 {
-	return recv(m_clientSocket, buffer, 1024 - 1, 0);
+	return recv(m_clientSocket, buffer, READ_BUFFER_SIZE - 1, 0);
+}
+
+GatewayManager_c::~GatewayManager_c()
+{
+	close(m_clientSocket);
 }
 
