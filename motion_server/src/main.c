@@ -163,7 +163,8 @@ int main(int argc, char* argv[])
 	pthread_t player_thread;
 	size_t _read = 0;
 	FILE* motionLog = NULL;
-	char readBuffer[READ_BUFFER_SIZE] = {0};
+	char readBuffer[READ_BUFFER_SIZE] =
+	{ 0 };
 
 	/* Create the listening connection socket */
 	listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -187,14 +188,16 @@ int main(int argc, char* argv[])
 		exit(errno);
 	}
 
-	/*Initialize the audio player  */
-	if (init_audio_player(argc, argv) == -1)
-	{
-		fprintf(stderr,
-				"[WARNING] Error while initializing the audio player\n");
-	}
 	while (1)
 	{
+
+		/*Initialize the audio player  */
+		if (init_audio_player(argc, argv) == -1)
+		{
+			fprintf(stderr,
+					"[WARNING] Error while initializing the audio player\n");
+		}
+
 		/* Open the motionLog in writing mode */
 		motionLog = fopen("/var/www/hesdom.com/motionLog.txt", "a+");
 
@@ -248,7 +251,7 @@ int main(int argc, char* argv[])
 				pthread_detach(player_thread);
 			}
 			/* reinit the buffer */
-			memset(readBuffer,0, sizeof(readBuffer));
+			memset(readBuffer, 0, sizeof(readBuffer));
 		}
 
 		if (_read == -1)
